@@ -1,0 +1,35 @@
+{
+  "name": "testApp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "NODE_ENV=development webpack-dev-server --open & NODE_ENV=development nodemon server/app.js",
+    "build": "NODE_ENV=production && webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "core-util-is": "^1.0.2",
+    "express": "^4.17.1",
+    "path": "^0.12.7",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.5.3",
+    "html-webpack-plugin": "^4.3.0",
+    "nodemon": "^1.18.9",
+    "style-loader": "^1.2.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  }
+}
