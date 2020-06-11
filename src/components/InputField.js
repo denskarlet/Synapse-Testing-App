@@ -6,6 +6,7 @@ const InputField = () => {
     message: "",
     tag: "",
   });
+  console.log(newPost);
   const handleChange = (e) => {
     const { name } = e.target;
     const newValue = e.target.value;

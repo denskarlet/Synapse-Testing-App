@@ -1,0 +1,28 @@
+DROP TABLE IF EXIST tags;
+DROP TABLE IF EXIST messages;
+DROP TABLE IF EXIST users;
+DROP TABLE IF EXIST sessions; 
+
+CREATE TABLE tags (
+  message_id uuid PRIMARY KEY DEFAULT uuid_generate_v4() ,
+  tag_name varchar(16)
+);
+
+CREATE TABLE messages (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(), 
+  message varchar(1024),
+  posted_by UUID,
+  created_at timestamp DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE users (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  username varchar(16) UNIQUE,
+  password varchar(128)
+);
+
+CREATE TABLE sessions (
+  session_id uuid PRIMARY KEY DEFAULT uuid_generate_v4() ,
+  user_id UUID,
+  created_at timestamp DEFAULT CURRENT_TIMESTAMP
+);
