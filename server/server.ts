@@ -1,10 +1,11 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
-const synapse = require("synapse");
+const { synapse } = require("synapse");
 const path = require("path");
 
 const app = express();
 const port = 3000;
+const api = synapse(path.resolve(__dirname, "./resources"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

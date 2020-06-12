@@ -2,7 +2,7 @@ import React from "react";
 import InputField from "./InputField";
 import Tags from "./Tags";
 
-const Body = () => {
+const Home = () => {
   console.log("BODY");
   return (
     <div>
@@ -11,4 +11,4 @@ const Body = () => {
     </div>
   );
 };
-export default Body;
+export default Home;
