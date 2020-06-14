@@ -6,6 +6,7 @@ const InputField = () => {
     tag_name: "",
   });
   const handleChange = (e) => {
+    console.log(e.target.name);
     const { name } = e.target;
     const newValue = e.target.value;
     setNewPost({ [name]: newValue });
@@ -41,10 +42,10 @@ const InputField = () => {
       <input
         autoComplete="off"
         className="message"
-        name="tag"
+        name="tag_name"
         type="text"
         placeholder="tag"
-        value={newPost.tag}
+        value={newPost.tag_name}
         onChange={handleChange}
       />
       <button type="submit" onClick={handleSubmit}>

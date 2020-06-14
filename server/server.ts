@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const { synapse } = require("synapse");
 const path = require("path");
 const cors = require("cors");
+const enableWs = require("express-ws");
 
 const app = express();
 const port = 3000;
@@ -16,17 +17,17 @@ app.use(cookieParser());
 app.use(cors());
 
 app.use((req, res, next) => {
-  console.log("asdasdasd");
   res.cookie("client_id", req.cookies.client_id || uuidv4());
   next();
 });
+enableWs(app);
+app.ws("/api", api.ws);
 
 app.use("/api", api.http, (req, res) => {
   res.status(res.locals.status()).json(res.locals.render());
 });
 app.get(function (request, response) {
-  console.log("SULA");
-  response.sendFile(path.resolve(__dirname, "..", "dist", "index.html"));
+  response.sendFile(path.resolve(__dirname, "dist", "index.html"));
 });
 
 app.use((err, req, res, next) => {

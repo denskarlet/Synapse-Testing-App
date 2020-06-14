@@ -8,7 +8,7 @@ const Loading = (props) => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  return isVerified ? <Redirect to="/" /> : <Redirect to="/loging" />;
+  return isVerified ? <Redirect to="/" /> : <Redirect to="/login" />;
 };
 
 export default Loading;

@@ -16,11 +16,12 @@ const App = () => {
     fetch(`http://localhost:3000/api/session/${cookie}`)
       .then((data) => data.json())
       .then((res) => {
-        if (res.user_id) {
+        if (res) {
           setIsVerified(true);
         }
         setIsLoading(false);
-      });
+      })
+      .catch((err) => console.log(err));
   }, []);
   if (isLoading) return <Loading isLoading={isLoading} isVerified={isVerified} />;
   return (

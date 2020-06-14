@@ -12,7 +12,7 @@ const Tags = () => {
   });
   const webSocket = useRef(null);
   useEffect(() => {
-    webSocket.current = new WebSocket(`ws://POUTYOURURL`);
+    webSocket.current = new WebSocket(`ws://localhost:3000/api`);
   }, []);
 
   useEffect(() => {
@@ -20,11 +20,12 @@ const Tags = () => {
       console.log("WS connection is now open!");
     };
     webSocket.current.onmessage = (event) => {
+      console.log(event.data);
       console.log("Incoming WS message!");
       const message = JSON.parse(event.data);
       const key = ""; // tag
       const msg = ""; // payload
-      setPosts({ ...posts, [key]: msg });
+      // setPosts({ ...posts, [key]: msg });
     };
     webSocket.current.onclose = (event) => {
       console.log("WebSocket connection is closed!");
@@ -36,11 +37,14 @@ const Tags = () => {
   };
   const subscribeToTag = (e) => {
     setPosts({ ...posts, [tag]: [] });
-    // webSocket.current.send(JSON.stringify(`SUBSCRIBE localhost:3000/api/message/${tag}`));
+    const message = {
+      [`SUBSCRIBE /message/${tag}`]: {},
+    };
+    webSocket.current.send(JSON.stringify(message));
     setTag("");
   };
   const unsubscribeFromTag = (name) => {
-    // webSocket.current.send(JSON.stringify(`UNSUBSCRIBE localhost:3000/api/message/${tag}`));
+    webSocket.current.send(JSON.stringify(`UNSUBSCRIBE localhost:3000/api/message/${tag}`));
     delete posts[name];
     setPosts({ ...posts });
   };
@@ -60,8 +64,8 @@ const Tags = () => {
       <button type="button" onClick={subscribeToTag}>
         Subscribe!
       </button>
-      <div>{arrayOfTags}</div>
-      <Feed posts={posts} />
+      <div style={{ display: "flex", flexDirection: "column" }}>{arrayOfTags}</div>
+      {/* <Feed posts={posts} /> */}
     </>
   );
 };

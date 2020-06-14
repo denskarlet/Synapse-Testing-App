@@ -1,6 +1,5 @@
 import React, { useReducer, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
-import Home from "./Home";
 
 const Login = (props) => {
   const [isLogged, setIsLogged] = useState(false);
@@ -25,6 +24,7 @@ const Login = (props) => {
     })
       .then((res) => res.json())
       .then((response) => {
+        console.log("session response", response);
         if (response.user_id) {
           setIsLogged(true);
           props.setIsVerified(true);
