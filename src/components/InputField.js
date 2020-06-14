@@ -1,12 +1,10 @@
 import React, { useState, useReducer } from "react";
 
 const InputField = () => {
-  console.log("INPUT");
   const [newPost, setNewPost] = useReducer((state, newState) => ({ ...state, ...newState }), {
     message: "",
-    tag: "",
+    tag_name: "",
   });
-  console.log(newPost);
   const handleChange = (e) => {
     const { name } = e.target;
     const newValue = e.target.value;

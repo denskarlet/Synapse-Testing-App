@@ -39,7 +39,6 @@ const Tags = () => {
     // webSocket.current.send(JSON.stringify(`SUBSCRIBE localhost:3000/api/message/${tag}`));
     setTag("");
   };
-  console.log(posts);
   const unsubscribeFromTag = (name) => {
     // webSocket.current.send(JSON.stringify(`UNSUBSCRIBE localhost:3000/api/message/${tag}`));
     delete posts[name];

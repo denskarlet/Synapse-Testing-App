@@ -8,36 +8,34 @@ import { field, schema, expose } from "synapse/lib/meta";
 import db = require("../victoria");
 
 export default class User extends Resource {
-  @field(new Id()) _id: string;
+  @field(new Id()) user_id: string;
   @field(new Word(3, 16)) username: string;
   @field(new Text()) password: string;
 
-  static async find({ username }) {
-    const query = `SELECT FROM users WHERE username = "${username}"`;
-    // make SQL query /  find user / check pass / get user back / use his ID if needed.
-    db.query(query)
-      .then((data) => {
-        if (!data.rows[0]) return "fuck you";
-        return User.create(data.rows[0]);
-      })
-      .catch((err) => err);
-  }
-  // post request /
-  static async login({ username, password }) {
-    const query = `SELECT FROM users WHERE username = "${username}"`;
-    db.query(query).then((data) => {
-      if (!data.rows[0]) return "fuck u";
-      // check the password
-      return User.create(data.rows[0]);
-    });
+  @schema(User.schema.select("username", "password"))
+  static async authenticate({ username, password }) {
+    const query = `SELECT * FROM users WHERE username = '${username}'`;
+    const result = await db.query(query);
+    const user = result.rows[0];
+    if (user) {
+      const instance = await User.restore(user);
+      if (await Hash.validate(password, user.password)) return instance;
+    }
+    return State.FORBIDDEN("Incorrect username/password.");
   }
 
   @expose("POST /") // => /api/user/
-  @schema(User.schema.exclude("_id", "password").extend({ password: new Hash(6) }))
+  @schema(User.schema.exclude("user_id", "password").extend({ password: new Hash(6) }))
   static async register({ username, password }) {
-    const query = `INSERT INTO users (username, password) VALUES ("${username}","${password})`;
-    db.query(query)
-      .then((user) => User.create(user))
-      .catch((err) => err);
+    const findQuery = `SELECT username FROM users WHERE username = '${username}'`;
+    const findResult = await db.query(findQuery);
+    if (!findResult.rows[0]) {
+      const query = `INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *`;
+      const values = [`${username}`, `${password}`];
+      const result = await db.query(query, values);
+      const toReturn = await User.create(result.rows[0]);
+      return toReturn;
+    }
+    return State.FORBIDDEN("USERNAME MUST BE UNIQUE");
   }
 }

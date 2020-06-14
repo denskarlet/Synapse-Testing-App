@@ -1,7 +1,10 @@
-import React, { useReducer } from "react";
-import { Link } from "react-router-dom";
+import React, { useReducer, useState } from "react";
+import { Link, Redirect } from "react-router-dom";
+import Home from "./Home";
 
-const Login = () => {
+const Login = (props) => {
+  const [isLogged, setIsLogged] = useState(false);
+  const [toRegister, setToRegister] = useState(false);
   const [userInput, setUserInput] = useReducer((state, newState) => ({ ...state, ...newState }), {
     username: "",
     password: "",
@@ -13,7 +16,7 @@ const Login = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("api/user", {
+    fetch("api/session", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -22,12 +25,19 @@ const Login = () => {
     })
       .then((res) => res.json())
       .then((response) => {
-        console.log(response);
+        if (response.user_id) {
+          setIsLogged(true);
+          props.setIsVerified(true);
+        } else {
+          setToRegister(true);
+        }
       })
       .catch((error) => {
         console.log(error);
       });
   };
+  if (isLogged && props.isVerified) return <Redirect to="/" />;
+  if (toRegister) return <Redirect to="/register" />;
   return (
     <>
       <form>
@@ -53,10 +63,8 @@ const Login = () => {
           Login
         </button>
       </form>
-      <Link to="/api/user">Sign Up</Link>
+      <Link to="/register">Sign Up</Link>
     </>
   );
 };
-// form
-// link to sign up
 export default Login;

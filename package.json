@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/server/server.s",
+    "start": "node dist/server/server.js",
     "dev": "NODE_ENV=development webpack-dev-server --open & NODE_ENV=development nodemon",
     "build": "tsc && NODE_ENV=production && webpack",
     "test": "babel-node server/server.js"
@@ -20,6 +20,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
+    "js-cookie": "^2.2.1",
     "path": "^0.12.7",
     "pg": "^8.2.1",
     "react": "^16.13.1",
@@ -27,7 +28,8 @@
     "react-router-dom": "^5.2.0",
     "synapse": "file:../synapse",
     "ts-node": "^8.10.2",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.5",
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",

@@ -1,10 +1,12 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useState } from "react";
+import { Redirect } from "react-router-dom";
 
 const SignUp = () => {
   const [userInput, setUserInput] = useReducer((state, newState) => ({ ...state, ...newState }), {
     username: "",
     password: "",
   });
+  const [registered, setRegistered] = useState(false);
   const handleChange = (e) => {
     const { name } = e.target;
     const newValue = e.target.value;
@@ -12,7 +14,7 @@ const SignUp = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("/api/user/register", {
+    fetch("/api/user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -21,14 +23,18 @@ const SignUp = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        if (data.user_id) {
+          setRegistered(true);
+        }
       })
       .catch((err) => {
         console.log(err);
       });
   };
+  if (registered) return <Redirect to="/" />;
   return (
     <div>
+      Register
       <form>
         <input
           autoComplete="off"

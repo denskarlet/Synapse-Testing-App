@@ -4,7 +4,6 @@ import React from "react";
 const Post = (props) => {
   const { postInfo } = props;
   const { author, message, tag } = postInfo;
-  console.log(postInfo);
   return (
     <div
       style={{

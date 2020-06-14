@@ -3,7 +3,6 @@ import InputField from "./InputField";
 import Tags from "./Tags";
 
 const Home = () => {
-  console.log("BODY");
   return (
     <div>
       <InputField />
