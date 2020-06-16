@@ -6,14 +6,13 @@ const InputField = () => {
     tag_name: "",
   });
   const handleChange = (e) => {
-    console.log(e.target.name);
     const { name } = e.target;
     const newValue = e.target.value;
     setNewPost({ [name]: newValue });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("api/message", {
+    fetch(`http://localhost:3000/api/message/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -21,9 +20,6 @@ const InputField = () => {
       body: JSON.stringify(newPost),
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      })
       .catch((error) => {
         console.log(error);
       });

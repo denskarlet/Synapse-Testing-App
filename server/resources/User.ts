@@ -3,7 +3,8 @@
 
 import { Resource, State } from "synapse";
 import { Email, Id, Text, Hash, Word, Password } from "synapse/lib/fields";
-import { field, schema, expose } from "synapse/lib/meta";
+import { schema, expose } from "synapse/lib/abstract/Controllable";
+import { field } from "synapse/lib/abstract/Validatable";
 
 import db = require("../victoria");
 
@@ -24,7 +25,7 @@ export default class User extends Resource {
     return State.FORBIDDEN("Incorrect username/password.");
   }
 
-  @expose("POST /") // => /api/user/
+  @expose("POST /")
   @schema(User.schema.exclude("user_id", "password").extend({ password: new Hash(6) }))
   static async register({ username, password }) {
     const findQuery = `SELECT username FROM users WHERE username = '${username}'`;
@@ -32,7 +33,7 @@ export default class User extends Resource {
     if (!findResult.rows[0]) {
       const query = `INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *`;
       const values = [`${username}`, `${password}`];
-      const result = await db.query(query, values);
+      const result = await db.query(query, values); //
       const toReturn = await User.create(result.rows[0]);
       return toReturn;
     }

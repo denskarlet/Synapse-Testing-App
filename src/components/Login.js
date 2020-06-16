@@ -1,70 +1,58 @@
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Redirect } from "react-router-dom";
+import Cookies from "js-cookie";
+import { useAuth } from "./Auth";
 
 const Login = (props) => {
-  const [isLogged, setIsLogged] = useState(false);
-  const [toRegister, setToRegister] = useState(false);
-  const [userInput, setUserInput] = useReducer((state, newState) => ({ ...state, ...newState }), {
-    username: "",
-    password: "",
-  });
+  const cookie = Cookies.get("client_id");
+  const [input, setInput] = useState({ username: "", password: "" });
+  const { setAuthTokens } = useAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const handleChange = (e) => {
-    const { name } = e.target;
-    const newValue = e.target.value;
-    setUserInput({ [name]: newValue });
+    const { name, value } = e.target;
+    setInput({ ...input, [name]: value });
   };
   const handleSubmit = (e) => {
+    setAuthTokens(cookie);
+    setIsLoggedIn(true);
     e.preventDefault();
-    fetch("api/session", {
+    fetch(`http://localhost:3000/api/session/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userInput),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        console.log("session response", response);
-        if (response.user_id) {
-          setIsLogged(true);
-          props.setIsVerified(true);
-        } else {
-          setToRegister(true);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      credentials: "include",
+      body: JSON.stringify(input),
+    }).then((data) => {
+      if (data.status === 201) {
+        setAuthTokens(cookie);
+        setIsLoggedIn(true);
+      }
+      setInput({ username: "", password: "" });
+    });
   };
-  if (isLogged && props.isVerified) return <Redirect to="/" />;
-  if (toRegister) return <Redirect to="/register" />;
+  if (isLoggedIn) return <Redirect to="/" />;
   return (
-    <>
-      <form>
-        <input
-          autoComplete="off"
-          className="username"
-          name="username"
-          type="text"
-          placeholder="username"
-          value={userInput.username}
-          onChange={handleChange}
-        />
-        <input
-          autoComplete="off"
-          className="password"
-          name="password"
-          type="password"
-          placeholder="password"
-          value={userInput.password}
-          onChange={handleChange}
-        />
-        <button type="submit" onClick={handleSubmit}>
-          Login
-        </button>
-      </form>
-      <Link to="/register">Sign Up</Link>
-    </>
+    <div>
+      Login!
+      <input
+        type="text"
+        onChange={handleChange}
+        name="username"
+        placeholder="username"
+        value={input.username}
+      />
+      <input
+        type="password"
+        onChange={handleChange}
+        name="password"
+        placeholder="username"
+        value={input.password}
+      />
+      <button onClick={handleSubmit}>Login!</button>
+      <Link to="/register">Sign Up!</Link>
+    </div>
   );
 };
+
 export default Login;

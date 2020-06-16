@@ -1,13 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
-const NotFound = () => {
+const NotFount = () => {
   return (
-    <>
-      <div>The page you are looking for doesn't exist!</div>
-      <Link to="/">Go back to the main page!</Link>
-    </>
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      Are you lost? 404
+      <img
+        style={{ height: "300px", width: "300px" }}
+        src="https://vignette.wikia.nocookie.net/westworld/images/7/7d/Little_boy_chestnut_infobox.jpg/revision/latest/top-crop/width/360/height/360?cb=20161104045517"
+      ></img>
+    </div>
   );
 };
-
-export default NotFound;
+export default NotFount;

@@ -4,12 +4,13 @@ import Post from "./Post";
 
 const Feed = (props) => {
   const { posts } = props;
-  const arrayOfPosts = [];
-  Object.keys(posts).forEach((tag, index) => {
-    posts[tag].forEach((post, i) => {
-      arrayOfPosts.push(<Post key={`post${(tag, i, index)}`} postInfo={post} />);
-    });
-  });
-  return <div>{arrayOfPosts}</div>;
+  const parseMessage = (obj, index, i) => {
+    return <Post key={`${index}${i}`} info={obj} />;
+  };
+  const parseQuery = (array, index) => {
+    return array.map((e, i) => parseMessage(e, index, i));
+  };
+  const toRender = Object.keys(posts).map((key, index) => parseQuery(posts[key], index));
+  return <div>{toRender}</div>;
 };
 export default Feed;

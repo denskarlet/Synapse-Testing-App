@@ -11,6 +11,9 @@ const app = express();
 const port = 3000;
 const api = synapse(path.resolve(__dirname, "./resources"));
 
+api.use((req, res) => {
+  res.status(res.locals.status()).json(res.locals.render());
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -22,12 +25,10 @@ app.use((req, res, next) => {
 });
 enableWs(app);
 app.ws("/api", api.ws);
+app.use("/api", api.http);
 
-app.use("/api", api.http, (req, res) => {
-  res.status(res.locals.status()).json(res.locals.render());
-});
-app.get(function (request, response) {
-  response.sendFile(path.resolve(__dirname, "dist", "index.html"));
+app.use("*", function (request, response) {
+  response.sendFile(path.resolve(__dirname, "..", "/src", "index.html"));
 });
 
 app.use((err, req, res, next) => {

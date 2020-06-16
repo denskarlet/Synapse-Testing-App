@@ -4,17 +4,17 @@
 
 import { Resource, State } from "synapse";
 import { Email, Id, Text, Hash, Word, Password } from "synapse/lib/fields";
-import { field, schema, expose } from "synapse/lib/meta";
+import { schema, expose } from "synapse/lib/abstract/Controllable";
+import { field } from "synapse/lib/abstract/Validatable";
 
 import User from "./User";
 
 import db = require("../victoria");
 
 export default class Session extends Resource {
-  @field(new Id()) user_id: string; //
-  @field(new Id()) client_id: string; // from cookie
-
-  @expose("GET /:client_id")
+  @field(new Id()) user_id: string;
+  @field(new Id()) client_id: string;
+  @expose("GET /")
   @schema(Session.schema.select("client_id"))
   static async getSession({ client_id }) {
     const query = `SELECT * FROM sessions WHERE client_id ='${client_id}'`;
