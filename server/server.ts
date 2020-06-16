@@ -4,7 +4,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const { synapse } = require("synapse");
 const path = require("path");
-const cors = require("cors");
+// const cors = require("cors");
 const enableWs = require("express-ws");
 
 const app = express();
@@ -12,15 +12,22 @@ const port = 3000;
 const api = synapse(path.resolve(__dirname, "./resources"));
 
 api.use((req, res) => {
-  res.status(res.locals.status()).json(res.locals.render());
+  res.status(res.locals.$status()).json(res.locals.render());
 });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors());
+// app.use(cors());
 
 app.use((req, res, next) => {
+  console.log(" i hit it");
   res.cookie("client_id", req.cookies.client_id || uuidv4());
+  res.set({
+    "Access-Control-Allow-Origin": "http://localhost:8080",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Origin, Content-Type, X-Auth-Token",
+    "Access-Control-Allow-Credentials": true,
+  });
   next();
 });
 enableWs(app);

@@ -17,6 +17,7 @@ const InputField = () => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(newPost),
     })
       .then((res) => res.json())

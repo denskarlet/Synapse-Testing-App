@@ -14,6 +14,11 @@ function App() {
     localStorage.setItem("session_token", JSON.stringify(data));
     setAuthTokens(data);
   };
+  useEffect(() => {
+    fetch("http://localhost:3000/api/session").then((data) => {
+      console.log(data);
+    });
+  }, []);
   return (
     <div>
       <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>

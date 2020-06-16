@@ -21,6 +21,7 @@ const Tags = () => {
       console.log("Incoming WS message!");
       const payload = JSON.parse(event.data);
       const [, data] = Object.entries(payload)[0];
+      console.log(payload);
       const tagQuery = data.$.query;
       if (tagQuery !== null) {
         const arrayOfMessages = data.resources;
