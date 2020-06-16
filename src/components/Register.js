@@ -13,7 +13,11 @@ const Register = (props) => {
     e.preventDefault();
     fetch(`http://localhost:3000/api/user`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(input),
+      credentials: "include",
     })
       .then((data) => {
         if (data.status === 201) {
@@ -41,7 +45,7 @@ const Register = (props) => {
         type="password"
         onChange={handleChange}
         name="password"
-        placeholder="username"
+        placeholder="password"
         value={input.password}
       />
       <button onClick={handleSubmit}>Sign Up!</button>
