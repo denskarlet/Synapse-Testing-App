@@ -1,13 +1,35 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useReducer } from "react";
 import Feed from "./Feed";
-
+/*
+{
+  TESTTTT: [
+    {
+      message:
+        "On december 8 Elon Musk will deploy his pants into the outter space. MARS will never be the same - he said.",
+      tag_name: "space",
+      username: "Denis99",
+      created_at: "asd",
+    },
+    {
+      message: "On deasdasdass into the aser be the same - he said.",
+      tag_name: "space",
+      username: "Denis99",
+      created_at: "asd",
+    },
+  ],
+} */
+const MemoFeed = React.memo(Feed);
 const Tags = () => {
+  const reducer = (state, payload) => {
+    return { ...state, payload };
+  };
+  const [test, dispatch] = useReducer(reducer, {});
   const [tag, setTag] = useState("");
   const [posts, setPosts] = useState({});
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState({});
   const webSocket = useRef(null);
   const [relations, setRelations] = useState({});
   useEffect(() => {
@@ -33,7 +55,7 @@ const Tags = () => {
       console.log("Incoming WS message!");
       const data = JSON.parse(event.data);
       const [key, payload] = Object.entries(data)[0];
-      if (queries[key]) {
+      if (queries[key] && payload.length !== 0) {
         queries[key](payload);
         delete queries[key];
       } else if (listeners[key]) {
@@ -52,6 +74,10 @@ const Tags = () => {
     setTag(e.target.value);
   };
   const subscribeToTag = (e) => {
+    if (tags[tag]) {
+      setTag("");
+      return;
+    }
     if (!tag.length) return;
     webSocket.current.request(`SUBSCRIBE /message/${tag}`, {}, (result) => {
       const { query } = result;
@@ -63,7 +89,10 @@ const Tags = () => {
       });
     });
     setTag("");
-    setTags([...tags, tag]);
+    setTags({ ...tags, [tag]: true });
+  };
+  const func = () => {
+    console.log(posts);
   };
   const unsubscribeFromTag = (name) => {
     const query = relations[name];
@@ -73,26 +102,88 @@ const Tags = () => {
     delete relations[name];
     setRelations({ ...relations });
     setPosts({ ...posts });
-    setTags(tags.filter((elem) => elem !== name));
+    delete tags[name];
+    setTags({ ...tags });
   };
-  const arrayOfTags = tags.map((subTag, index) => {
+  const arrayOfTags = Object.keys(tags).map((subTag, index) => {
     return (
-      <div className="tag" key={`tag${index}`}>
+      <div style={{ fontSize: "20px", fontFamily: "Verdana" }} className="tag" key={`tag${index}`}>
         {subTag}
-        <button style={{ margin: "5px" }} type="button" onClick={() => unsubscribeFromTag(subTag)}>
-          x
+        <button
+          style={{
+            backgroundColor: "#15252e",
+            border: "solid 1px #73c6f5",
+            fontSize: "13px",
+            padding: "3px",
+            color: "#73c6f5",
+            margin: "2px",
+            borderRadius: "5px",
+          }}
+          type="button"
+          onClick={() => unsubscribeFromTag(subTag)}
+        >
+          Remove
         </button>
       </div>
     );
   });
   return (
-    <div>
-      <input value={tag} onChange={handleChange} placeholder="Find a tag..." type="text" required />
-      <button type="button" onClick={subscribeToTag}>
-        Subscribe!
-      </button>
-      <div style={{ display: "flex", flexDirection: "column" }}>{arrayOfTags}</div>
-      <Feed posts={posts} />
+    <div style={{ flexGrow: "2", display: "flex", flexDirection: "row", width: "66%" }}>
+      <div
+        className="home"
+        style={{
+          padding: "20px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          width: "50%",
+        }}
+      >
+        <input
+          style={{
+            color: "white",
+            backgroundColor: "#15252e",
+            border: "solid 1px #73c6f5",
+            outline: "none",
+            padding: "5px",
+            width: "28%",
+            margin: "5px",
+
+            borderRadius: "5px",
+          }}
+          value={tag}
+          onChange={handleChange}
+          placeholder="Find a tag..."
+          type="text"
+          required
+        />
+        <button onClick={func}>asdasd</button>
+        <button
+          style={{
+            fontFamily: "Verdana",
+            backgroundColor: "#15252e",
+            border: "solid 1px #73c6f5",
+            outline: "none",
+            color: "white",
+            borderRadius: "5px",
+            alignSelf: "center",
+            width: "30%",
+            margin: "5px",
+            padding: "5px",
+            height: "35px",
+          }}
+          type="button"
+          onClick={subscribeToTag}
+        >
+          Subscribe!
+        </button>
+        <MemoFeed posts={posts} />
+      </div>
+      <div
+        style={{ display: "flex", flexWrap: "wrap", height: "50px", width: "50%", padding: "20px" }}
+      >
+        {arrayOfTags}
+      </div>
     </div>
   );
 };
