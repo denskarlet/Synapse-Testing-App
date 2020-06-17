@@ -3,32 +3,26 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, useEffect, useRef, useReducer } from "react";
 import Feed from "./Feed";
-/*
-{
-  TESTTTT: [
-    {
-      message:
-        "On december 8 Elon Musk will deploy his pants into the outter space. MARS will never be the same - he said.",
-      tag_name: "space",
-      username: "Denis99",
-      created_at: "asd",
-    },
-    {
-      message: "On deasdasdass into the aser be the same - he said.",
-      tag_name: "space",
-      username: "Denis99",
-      created_at: "asd",
-    },
-  ],
-} */
+
 const MemoFeed = React.memo(Feed);
 const Tags = () => {
-  const reducer = (state, payload) => {
-    return { ...state, payload };
+  const reducer = (state, [method, data]) => {
+    const { query, payload } = data;
+    switch (method) {
+      case "add": {
+        return { ...state, [query]: payload };
+      }
+      case "remove": {
+        const copy = { ...state };
+        delete copy[query];
+        return { ...copy };
+      }
+      default:
+        return state;
+    }
   };
-  const [test, dispatch] = useReducer(reducer, {});
+  const [posts, setPosts] = useReducer(reducer, {});
   const [tag, setTag] = useState("");
-  const [posts, setPosts] = useState({});
   const [tags, setTags] = useState({});
   const webSocket = useRef(null);
   const [relations, setRelations] = useState({});
@@ -55,7 +49,7 @@ const Tags = () => {
       console.log("Incoming WS message!");
       const data = JSON.parse(event.data);
       const [key, payload] = Object.entries(data)[0];
-      if (queries[key] && payload.length !== 0) {
+      if (queries[key]) {
         queries[key](payload);
         delete queries[key];
       } else if (listeners[key]) {
@@ -81,18 +75,15 @@ const Tags = () => {
     if (!tag.length) return;
     webSocket.current.request(`SUBSCRIBE /message/${tag}`, {}, (result) => {
       const { query } = result;
-      const { payload } = result;
+      // const { payload } = result;
       setRelations({ ...relations, [tag]: query });
-      setPosts({ ...posts, [query]: payload });
+      setPosts(["add", result]);
       webSocket.current.listen(query, (newState) => {
-        setPosts({ ...posts, [query]: newState });
+        setPosts(["add", { query, payload: newState }]);
       });
     });
     setTag("");
     setTags({ ...tags, [tag]: true });
-  };
-  const func = () => {
-    console.log(posts);
   };
   const unsubscribeFromTag = (name) => {
     const query = relations[name];
@@ -101,7 +92,7 @@ const Tags = () => {
     delete posts[query];
     delete relations[name];
     setRelations({ ...relations });
-    setPosts({ ...posts });
+    setPosts(["remove", { query: name, payload: null }]);
     delete tags[name];
     setTags({ ...tags });
   };
@@ -157,7 +148,6 @@ const Tags = () => {
           type="text"
           required
         />
-        <button onClick={func}>asdasd</button>
         <button
           style={{
             fontFamily: "Verdana",
