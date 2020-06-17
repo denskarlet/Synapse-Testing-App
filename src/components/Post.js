@@ -90,7 +90,7 @@ const Post = (props) => {
         <span style={{ color: "#6e6e6e", fontSize: "12px" }}>{time}</span>
       </div>
 
-      <span>{info.message}</span>
+      <span style={{ wordWrap: "break-word" }}>{info.message}</span>
       <span style={{ color: "#6e6e6e", fontFamily: "Verdana" }}># {info.tag_name}</span>
       {editMode && (
         <form>
