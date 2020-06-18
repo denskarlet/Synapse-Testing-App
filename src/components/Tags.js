@@ -98,8 +98,12 @@ const Tags = () => {
   };
   const arrayOfTags = Object.keys(tags).map((subTag, index) => {
     return (
-      <div style={{ fontSize: "20px", fontFamily: "Verdana" }} className="tag" key={`tag${index}`}>
-        {subTag}
+      <div
+        style={{ fontSize: "20px", fontFamily: "Verdana", marginRight: "5px" }}
+        className="tag"
+        key={`tag${index}`}
+      >
+        <span style={{ marginRight: "5px" }}>{subTag}</span>
         <button
           style={{
             backgroundColor: "#15252e",

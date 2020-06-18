@@ -30,10 +30,10 @@ const Login = (props) => {
       if (data.status === 201) {
         setAuthTokens(cookie);
         setIsLoggedIn(true);
-        setTimeout(() => {
-          setLoading(false);
-        }, 650);
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 650);
       setInput({ username: "", password: "" });
       return data.json();
     });
